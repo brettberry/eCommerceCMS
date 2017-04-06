@@ -5,7 +5,6 @@ const dao = new ProductsDao();
 const router = express.Router();
 
 // Product Table Requests
-// TODO: Change to correct path endpoint
 
 router.get('/', (req, res) => {
   dao.findAll()
