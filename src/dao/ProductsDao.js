@@ -5,12 +5,18 @@ const connection = require('./connection');
 module.exports = class ProductsDao {
 
   findAll() {
-    return connection.queryAsync('select * from product');
+    return connection.queryAsync('select * from product')
+      .then(rows => rows.map(row => formatProduct(row)));
   }
 
   findById(id) {
     return connection.queryAsync('select * from product where id=?', [id])
-      .then(rows => rows.length ? rows[0] : null);
+      .then(rows => rows.length ? formatProduct(rows[0]) : null);
+  }
+
+  findByPathName(pathName) {
+    return connection.queryAsync('select * from product where pathName=?', [pathName])
+      .then(rows => rows.length ? formatProduct(rows[0]) : null);
   }
 
   createProduct(params) {
@@ -25,11 +31,23 @@ module.exports = class ProductsDao {
       ) values (?, ?, ?, ?, ?, ?)`, [
         params.fullName,
         params.pathName,
-        params.priceAmount,
-        params.priceDiscount,
+        params.price.amount,
+        params.price.discount,
         params.description,
         params.category
       ]);
   }
+}
 
+function formatProduct(product) {
+  return {
+    fullName: product.fullName,
+    pathName: product.pathName,
+    description: product.description,
+    category: product.category,
+    price: {
+      amount: product.priceAmount,
+      discount: product.priceDiscount
+    }
+  }
 }

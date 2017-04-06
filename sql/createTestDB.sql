@@ -34,8 +34,8 @@ create table product_media (
 create table product (
   fullName varchar(100) not null unique,
   pathName varchar(100) not null unique,
-  priceAmount varchar(10) not null,
-  priceDiscount varchar(10),
+  priceAmount decimal(5, 2) not null,
+  priceDiscount decimal(5, 2),
   description varchar(10000),
   category varchar(100) not null,
   id bigint auto_increment primary key
