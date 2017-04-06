@@ -8,6 +8,11 @@ module.exports = class ProductsDao {
     return connection.queryAsync('select * from product');
   }
 
+  findById(id) {
+    return connection.queryAsync('select * from product where id=?', [id])
+      .then(rows => rows.length ? rows[0] : null);
+  }
+
   createProduct(params) {
     return connection.queryAsync(`
       insert into product (

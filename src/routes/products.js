@@ -4,11 +4,16 @@ const dao = new ProductsDao();
 
 const router = express.Router();
 
-// Product Table Requests
-
 router.get('/', (req, res) => {
   dao.findAll()
     .then(products => res.json(products))
+    .catch(error => res.json(error));
+});
+
+router.get('/:id', (req, res) => {
+  const id = req.params.id;
+  dao.findById(id)
+    .then(product => res.json(product))
     .catch(error => res.json(error));
 });
 
@@ -25,8 +30,6 @@ router.post('/', (req, res) => {
     .then(() => res.json({ success: true }))
     .catch(error => res.json(error));
 });
-
-// Update and delete product by id
 
 router.put('/:id', (req, res) => {
   const name = req.body.name;
