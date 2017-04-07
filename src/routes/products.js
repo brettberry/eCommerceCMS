@@ -40,18 +40,21 @@ router.post('/', (req, res) => {
     .catch(error => res.json(error));
 });
 
-// TODO
 router.put('/:id', (req, res) => {
-  const name = req.body.name;
+  const body = req.body;
   const id = req.params.id;
-  connection.query('update product set name=? where id=?', [name, id], (error) => {
-    if (error) {
-      return res.json(error);
-    }
-    return res.json({
-      success: true
-    })
+  dao.updateProduct(id, {
+    fullName: body.fullName,
+    pathName: body.pathName,
+    price: {
+      amount: body.price.amount,
+      discount: body.price.discount
+    },
+    description: body.description,
+    category: body.category
   })
+    .then(() => res.json({ success: true }))
+    .catch(error => res.json(error));
 });
 
 // TODO

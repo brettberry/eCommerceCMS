@@ -37,6 +37,29 @@ module.exports = class ProductsDao {
         params.category
       ]);
   }
+
+  updateProduct(id, params) {
+    return connection.queryAsync('
+      update product set
+        fullName=?,
+        pathName=?,
+        priceAmount=?,
+        priceDiscount=?,
+        description=?,
+        category=? where id=?', [
+          params.fullName,
+          params.pathName,
+          params.price.amount,
+          params.price.discount,
+          params.description,
+          params.category,
+          id
+      ]);
+  }
+
+  deleteProduct(id) {
+    return connection.queryAsync('delete from product where id=?', [id])
+  }
 }
 
 function formatProduct(product) {
