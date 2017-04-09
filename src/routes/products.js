@@ -57,7 +57,6 @@ router.put('/:id', (req, res) => {
     .catch(error => res.json(error));
 });
 
-// TODO
 router.delete('/:id', (req, res) => {
   const id = req.params.id;
   connection.query('delete from product where id=?', [id], (error) => {

@@ -1,11 +1,10 @@
 'use strict';
-
 const connection = require('./connection');
 
 module.exports = class ProductsDao {
 
-  findAll() {
-    return connection.queryAsync('select * from product')
+  findAll(limit, offset) {
+    return connection.queryAsync('select * from product limit ? offset ?', [limit || 100, offset || 0])
       .then(rows => rows.map(row => formatProduct(row)));
   }
 
@@ -39,14 +38,14 @@ module.exports = class ProductsDao {
   }
 
   updateProduct(id, params) {
-    return connection.queryAsync('
+    return connection.queryAsync(`
       update product set
         fullName=?,
         pathName=?,
         priceAmount=?,
         priceDiscount=?,
         description=?,
-        category=? where id=?', [
+        category=? where id=?`, [
           params.fullName,
           params.pathName,
           params.price.amount,

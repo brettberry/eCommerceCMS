@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
 const products = require('./routes/products');
+const orders = require('./routes/orders');
 
 const app = express();
 
@@ -14,4 +15,5 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(morgan('combined'));
 app.use('/products', products);
+app.use('/orders', orders);
 app.listen(3000, () => console.log('listening on port http://localhost:3000'));
