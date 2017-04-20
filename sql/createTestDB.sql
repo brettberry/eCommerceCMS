@@ -90,3 +90,18 @@ create table ordered_product (
   foreign key fk_order(orderId) references `order`(id),
   foreign key fk_product(productId) references product(id)
 );
+
+-- Users Table --
+
+create table user_role (
+  name varchar(100) not null,
+  id bigint auto_increment primary key
+);
+
+create table user (
+  email varchar(100) unique not null,
+  passwordHash varchar(5000) not null,
+  roleId bigint,
+  id bigint auto_increment primary key,
+  foreign key fk_role(roleId) references user_role(id)
+);

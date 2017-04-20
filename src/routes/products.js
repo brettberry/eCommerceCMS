@@ -1,15 +1,20 @@
+
+// docs: http://docs.ecommercecms.apiary.io/#reference
+
 const express = require('express');
 const ProductsDao = require('../dao/ProductsDao');
 const dao = new ProductsDao();
 
 const router = express.Router();
 
+// Find all products
 router.get('/', (req, res) => {
   dao.findAll()
     .then(products => res.json(products))
     .catch(error => res.json(error));
 });
 
+// Find a product by id
 router.get('/:id(\\d+)', (req, res) => {
   const id = req.params.id;
   dao.findById(id)
@@ -17,6 +22,7 @@ router.get('/:id(\\d+)', (req, res) => {
     .catch(error => res.json(error));
 });
 
+// Find a product by pathname
 router.get('/:pathName', (req, res) => {
   const pathName = req.params.pathName;
   dao.findByPathName(pathName)
@@ -24,6 +30,7 @@ router.get('/:pathName', (req, res) => {
     .catch(error => res.json(error));
 });
 
+// Create Product
 router.post('/', (req, res) => {
   const body = req.body;
   dao.createProduct({
@@ -40,6 +47,7 @@ router.post('/', (req, res) => {
     .catch(error => res.json(error));
 });
 
+// Edit a product by id
 router.put('/:id', (req, res) => {
   const body = req.body;
   const id = req.params.id;
@@ -57,16 +65,12 @@ router.put('/:id', (req, res) => {
     .catch(error => res.json(error));
 });
 
+// Remove a product by id
 router.delete('/:id', (req, res) => {
   const id = req.params.id;
-  connection.query('delete from product where id=?', [id], (error) => {
-    if (error) {
-      return res.json(error);
-    }
-    return res.json({
-      success: true
-    })
-  })
+  dao.deleteProduct(id)
+  .then(() => res.json({ success: true }))
+  .catch(error => res.json(error));
 });
 
 module.exports = router;

@@ -63,6 +63,7 @@ module.exports = class ProductsDao {
 
 function formatProduct(product) {
   return {
+    id: product.id,
     fullName: product.fullName,
     pathName: product.pathName,
     description: product.description,
