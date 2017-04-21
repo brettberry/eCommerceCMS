@@ -1,16 +1,19 @@
 const express = require('express');
 const UsersDao = require('../dao/UsersDao');
+const OrdersDao = require('../dao/OrdersDao');
 const dao = new UsersDao();
-const orderDao = new OrderDao();
+const ordersDao = new OrdersDao();
 
 const router = express.Router();
 
+// Find all users
 router.get('/', (req, res) => {
   dao.findAllUsers()
     .then(users => res.json(users))
     .catch(error => res.status(500).json(error));
 });
 
+// Find a user by user id
 router.get('/:id(\\d+)', (req, res) => {
   const id = req.params.id;
   dao.findUserById(id)
@@ -23,18 +26,20 @@ router.get('/:id(\\d+)', (req, res) => {
     .catch(error => res.status(500).json(error));
 })
 
+// Find all User's orders by User Id
 router.get('/:userId/orders', (req, res) => {
   const userId = req.params.userId;
-  orderDao.findAllOrdersByUserId(userId);
+  orderDao.findAllOrdersByUserId(userId)
     .then(userId => {
       if (userId) {
         return res.json(userId);
       }
-      return sendStatus(404;)
+      return sendStatus(404);
     })
     .catch(error => res.status(500).json(error));
 });
 
+// Find User by Email Address
 router.get('/:email'), (req, res) => {
   const email = req.params.email;
   dao.findUserByEmail(email)
@@ -47,6 +52,7 @@ router.get('/:email'), (req, res) => {
   .catch(error => res.status(500).json(error));
 }
 
+// Create New User
 router.post('/', (req, res) => {
   const body = req.body;
   dao.createUser({
@@ -58,6 +64,7 @@ router.post('/', (req, res) => {
     .catch(error => res.status(500).json(error));
 });
 
+// Edit user info by user id
 router.put('/:id', (req, res) => {
   const body = req.body;
   const id = req.params.id;

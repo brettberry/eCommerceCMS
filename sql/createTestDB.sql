@@ -94,9 +94,12 @@ create table ordered_product (
 -- Users Table --
 
 create table user_role (
-  name varchar(100) not null,
+  role varchar(100) not null,
   id bigint auto_increment primary key
 );
+
+insert into user_role (role) values ("ADMIN");
+insert into user_role (role) values ("USER");
 
 create table user (
   email varchar(100) unique not null,

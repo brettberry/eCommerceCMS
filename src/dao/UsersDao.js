@@ -8,15 +8,18 @@ module.exports = class UsersDao {
   }
 
   findUserById(id){
-    return connection.queryAsync('select * from user where id=?', [id]);
+    return connection.queryAsync('select * from user where id=?', [id])
+      .then(rows => rows.length ? rows[0] : null);
   }
 
   findUserByEmail(email) {
-    return connection.queryAsync('select * from user where email=?', [email]);
+    return connection.queryAsync('select * from user where email=?', [email])
+      .then(rows => rows.length ? rows[0] : null);
   }
 
   findUsersByRole(role) {
-    return connection.queryAsync('select * from user where role=?', [role]);
+    return connection.queryAsync('select * from user where role=?', [role])
+      .then(rows => rows.length ? rows[0] : null);
   }
 
   createUser(params) {
