@@ -5,6 +5,8 @@ const express = require('express');
 const ProductsDao = require('../dao/ProductsDao');
 const MediaDao = require('../dao/MediaDao');
 const mediaDao = new MediaDao();
+const TagDao = require('../dao/TagDao');
+const tagDao = new TagDao();
 const dao = new ProductsDao();
 
 const router = express.Router();
@@ -88,6 +90,17 @@ router.post('/:id/media', (req, res) => {
     })
     .then(() => res.json({ success: true }))
     .catch(error => res.json(error));
-})
+});
+
+router.post('/:id/tags', (req, res) => {
+  const productId = req.params.id;
+  tagDao.createTag(req.body.tagName, req.body.pathName)
+    .then(mysqlResponse => {
+      const tagId = mysqlResponse.insertId;
+      return tagDao.createProductTag(tagId, productId);
+    })
+    .then(() => res.json({ success: true }))
+    .catch(error => res.json(error));
+});
 
 module.exports = router;

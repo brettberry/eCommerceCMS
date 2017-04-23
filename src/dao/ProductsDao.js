@@ -18,18 +18,19 @@ module.exports = class ProductsDao {
       const productGroups = _.groupBy(rows, row => row.p.id);
       return _.map(productGroups, group => {
         const product = group[0].p;
-        const media = group.map(row => row.m).filter(m => m.id !== null);
+        const media = _.uniq(group.map(row => row.m.url));
         return formatProduct(product, media);
       });
-      // rows.map(row => formatProduct(row))
     });
   }
 
   findById(id) {
     return connection.queryAsync({
-        sql: `select p.*, m.* from product p
+        sql: `select p.*, m.*, t.* from product p
                 left join product_media pm on p.id = pm.productId
                 left join media m on m.id = pm.mediaId
+                left join product_tag pt on p.id = pt.productId
+                left join tag t on t.id = pt.tagId
               where p.id=?`,
         values: [id],
         nestTables: true
@@ -39,8 +40,9 @@ module.exports = class ProductsDao {
           return null;
         }
         const product = rows[0].p;
-        const media = rows.map(row => row.m).filter(m => m.id !== null);
-        return formatProduct(product, media);
+        const media = _.uniq(rows.map(row => row.m.url));
+        const tags = _.uniq(rows.map(row => row.t.pathName));
+        return formatProduct(product, media, tags);
       });
   }
 
@@ -58,7 +60,7 @@ module.exports = class ProductsDao {
           return null;
         }
         const product = rows[0].p;
-        const media = rows.map(row => row.m).filter(m => m.id !== null);
+        const media = _.uniq(rows.map(row => row.m.url));
         return formatProduct(product, media);
       });
   }
@@ -106,7 +108,7 @@ module.exports = class ProductsDao {
   }
 }
 
-function formatProduct(product, media) {
+function formatProduct(product, media, tags) {
   return {
     id: product.id,
     fullName: product.fullName,
@@ -117,6 +119,7 @@ function formatProduct(product, media) {
       amount: product.priceAmount,
       discount: product.priceDiscount
     },
-    media: media || []
+    media: media || [],
+    tags: tags || []
   }
 }
