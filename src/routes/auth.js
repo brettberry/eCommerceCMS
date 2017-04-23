@@ -6,12 +6,12 @@ const dao = new UsersDao();
 
 const router = express.Router();
 
-router.post('/login', passport.authenticate('basic', { session: false }), (req, res) => {
-  console.log(req.user);
+router.post('/login', passport.authenticate('basic'), (req, res) => {
   res.json({ success: true });
 });
 
 router.post('/logout', (req, res) => {
+  req.session.destroy();
   req.logout();
   res.json({ success: true });
 });

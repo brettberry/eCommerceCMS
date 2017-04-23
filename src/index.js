@@ -1,9 +1,11 @@
+const fs = require('fs');
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const morgan = require('morgan');
+const clc = require('cli-color');
 
 const passport = require('./passport');
 const products = require('./routes/products');
@@ -35,4 +37,9 @@ app.use('/products', products);
 app.use('/orders', orders);
 app.use('/users', users);
 app.use('/auth', auth);
-app.listen(3000, () => console.log('listening on port http://localhost:3000'));
+app.listen(3000, () => {
+  const header = fs.readFileSync('./header.txt');
+  const pinkify = clc.xterm(199);
+  console.log(pinkify(header.toString()));
+  console.log(pinkify('listening on port http://localhost:3000'));
+});

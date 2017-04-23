@@ -3,6 +3,8 @@
 
 const express = require('express');
 const ProductsDao = require('../dao/ProductsDao');
+const MediaDao = require('../dao/MediaDao');
+const mediaDao = new MediaDao();
 const dao = new ProductsDao();
 
 const router = express.Router();
@@ -43,7 +45,10 @@ router.post('/', (req, res) => {
       description: body.description,
       category: body.category
     })
-    .then(() => res.json({ success: true }))
+    .then(mysqlResponse => {
+      const id = mysqlResponse.insertId;
+      res.json({ success: true, id: id });
+    })
     .catch(error => res.json(error));
 });
 
@@ -72,5 +77,17 @@ router.delete('/:id', (req, res) => {
   .then(() => res.json({ success: true }))
   .catch(error => res.json(error));
 });
+
+// Create a media object linked to a product id
+router.post('/:id/media', (req, res) => {
+  const productId = req.params.id;
+  mediaDao.createMedia(req.body.url)
+    .then(mysqlResponse => {
+      const mediaId = mysqlResponse.insertId;
+      return mediaDao.createProductMedia(mediaId, productId);
+    })
+    .then(() => res.json({ success: true }))
+    .catch(error => res.json(error));
+})
 
 module.exports = router;

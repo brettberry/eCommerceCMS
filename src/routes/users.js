@@ -1,6 +1,7 @@
 const express = require('express');
 const UsersDao = require('../dao/UsersDao');
 const OrdersDao = require('../dao/OrdersDao');
+const passport = require('../passport');
 const dao = new UsersDao();
 const ordersDao = new OrdersDao();
 
@@ -24,9 +25,17 @@ router.get('/:id(\\d+)', (req, res) => {
       return res.sendStatus(404);
     })
     .catch(error => res.status(500).json(error));
-})
+});
 
-// Find all User's orders by User Id
+// Get current user
+router.get('/me', (req, res) => {
+  if (!req.user) {
+    return res.sendStatus(401);
+  }
+  return res.json(req.user);
+});
+
+// Find all user's orders by user id
 router.get('/:userId/orders', (req, res) => {
   const userId = req.params.userId;
   orderDao.findAllOrdersByUserId(userId)
@@ -39,8 +48,8 @@ router.get('/:userId/orders', (req, res) => {
     .catch(error => res.status(500).json(error));
 });
 
-// Find User by Email Address
-router.get('/:email'), (req, res) => {
+// Find user by email address
+router.get('/:email', (req, res) => {
   const email = req.params.email;
   dao.findUserByEmail(email)
   .then(user => {
@@ -50,15 +59,14 @@ router.get('/:email'), (req, res) => {
     return res.sendStatus(404);
   })
   .catch(error => res.status(500).json(error));
-}
+});
 
-// Create New User
+// Create new user
 router.post('/', (req, res) => {
   const body = req.body;
   dao.createUser({
       email: body.email,
-      passwordHash: body.passwordHash,
-      roleId: body.roleId
+      passwordHash: body.password
     })
     .then(() => res.json({ success: true }))
     .catch(error => res.status(500).json(error));
@@ -70,7 +78,7 @@ router.put('/:id', (req, res) => {
   const id = req.params.id;
   dao.updateUserById(id, {
       email: body.email,
-      passwordHash: body.passwordHash,
+      passwordHash: body.password,
       roleId: body.roleId
     })
     .then(() => res.json({ success: true }))
