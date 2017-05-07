@@ -11,8 +11,14 @@ const dao = new ProductsDao();
 
 const router = express.Router();
 
-// Find all products
+// Find all products (with an optional category)
 router.get('/', (req, res) => {
+  const query = req.query;
+  if (query.category) {
+    return dao.findByCategory(query.category)
+      .then(products => res.json(products))
+      .catch(error => res.json(error));
+  }
   dao.findAll()
     .then(products => res.json(products))
     .catch(error => res.json(error));
