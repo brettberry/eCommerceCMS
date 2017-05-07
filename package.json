@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/brettberry/eCommerceCMS#readme",
   "dependencies": {
+    "bcrypt": "^1.0.2",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.1",
     "cli-color": "^1.2.0",

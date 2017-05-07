@@ -1,5 +1,7 @@
 
 const passport = require('passport');
+const Promise = require('bluebird');
+const bcrypt = Promise.promisifyAll(require('bcrypt'));
 const BasicStrategy = require('passport-http').BasicStrategy;
 const UsersDao = require('./dao/UsersDao');
 const usersDao = new UsersDao();
@@ -9,12 +11,15 @@ passport.use(new BasicStrategy(
     usersDao.findUserByEmail(email)
       .then(user => {
         if (!user) {
-          callback(null, false);
+          return callback(null, false);
         }
-        else if (user.passwordHash !== password) {
-          callback(null, false);
-        }
-        callback(null, user);
+        return bcrypt.compareAsync(password, user.passwordHash)
+          .then(success => {
+            if (!success) {
+              return callback(null, false);
+            }
+            callback(null, user);
+          });
       })
       .catch(error => callback(error));
   }

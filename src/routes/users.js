@@ -1,4 +1,6 @@
 const express = require('express');
+const Promise = require('bluebird');
+const bcrypt = Promise.promisifyAll(require('bcrypt'));
 const UsersDao = require('../dao/UsersDao');
 const OrdersDao = require('../dao/OrdersDao');
 const passport = require('../passport');
@@ -64,9 +66,12 @@ router.get('/:email', (req, res) => {
 // Create new user
 router.post('/', (req, res) => {
   const body = req.body;
-  dao.createUser({
-      email: body.email,
-      passwordHash: body.password
+  bcrypt.hashAsync(body.password, 10)
+    .then(passwordHash => {
+      return dao.createUser({
+        email: body.email,
+        passwordHash: passwordHash
+      });
     })
     .then(() => res.json({ success: true }))
     .catch(error => res.status(500).json(error));
