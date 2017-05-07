@@ -7,9 +7,11 @@ module.exports = class ProductsDao {
 
   findAll(limit, offset) {
     return connection.queryAsync({
-      sql: `select p.*, m.* from product p
+      sql: `select p.*, m.*, t.* from product p
               left join product_media pm on p.id = pm.productId
               left join media m on m.id = pm.mediaId
+              left join product_tag pt on p.id = pt.productId
+              left join tag t on t.id = pt.tagId
             limit ? offset ?`,
       values: [limit || 100, offset || 0],
       nestTables: true
@@ -19,7 +21,8 @@ module.exports = class ProductsDao {
       return _.map(productGroups, group => {
         const product = group[0].p;
         const media = _.uniq(group.map(row => row.m.url));
-        return formatProduct(product, media);
+        const tags = _.uniq(group.map(row => row.t.pathName));
+        return formatProduct(product, media, tags);
       });
     });
   }

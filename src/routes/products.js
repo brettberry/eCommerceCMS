@@ -92,6 +92,7 @@ router.post('/:id/media', (req, res) => {
     .catch(error => res.json(error));
 });
 
+// Create a tag linked to a product id
 router.post('/:id/tags', (req, res) => {
   const productId = req.params.id;
   tagDao.createTag(req.body.tagName, req.body.pathName)
